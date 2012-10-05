@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: QueryManager
+Bundle-SymbolicName: QueryManager; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: ca.ucalgary.cpsc.ase.querymanager.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: ca.ucalgary.cpsc.ase.QueryManager,
+ ca.ucalgary.cpsc.ase.QueryManager.query
+Bundle-ClassPath: lib/log4j-1.2.16.jar,
+ .
