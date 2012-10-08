@@ -29,10 +29,28 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="TDR"
+            visible="true"
+            id="ca.ucalgary.cpsc.ase.querymanager.actionSet">
+         <menu
+               label="TDR"
+               id="tdrMenu">
+            <separator
+                  name="tdrGroup">
+            </separator>
+         </menu>
+         <action
+               label="&amp;Search"
+               icon="icons/sample.gif"
+               class="ca.ucalgary.cpsc.ase.querymanager.actions.SearchAction"
+               tooltip="Find similar test cases"
+               menubarPath="tdrMenu/tdrGroup"
+               toolbarPath="tdrGroup"
+               id="ca.ucalgary.cpsc.ase.querymanager.actions.SearchAction">
+         </action>
+      </actionSet>
    </extension>
 
 </plugin>
