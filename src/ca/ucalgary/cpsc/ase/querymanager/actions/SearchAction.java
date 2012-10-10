@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -11,6 +12,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -19,6 +21,7 @@ import ca.ucalgary.cpsc.ase.QueryManager.Query;
 import ca.ucalgary.cpsc.ase.QueryManager.VotingHeuristicManager;
 import ca.ucalgary.cpsc.ase.QueryManager.VotingResult;
 import ca.ucalgary.cpsc.ase.factextractor.composer.QueryGenerator;
+import ca.ucalgary.cpsc.ase.querymanager.views.ResultView;
 
 /**
  * Our sample action implements workbench action delegate.
@@ -29,11 +32,20 @@ import ca.ucalgary.cpsc.ase.factextractor.composer.QueryGenerator;
  * @see IWorkbenchWindowActionDelegate
  */
 public class SearchAction implements IWorkbenchWindowActionDelegate {
+	
+	private static Logger logger = Logger.getLogger(SearchAction.class);
+	
+	private static List<VotingResult> results;
+	
 	private IWorkbenchWindow window;
 	/**
 	 * The constructor.
 	 */
 	public SearchAction() {
+	}
+	
+	public static List<VotingResult> getResults() {
+		return results;
 	}
 
 	/**
@@ -57,20 +69,22 @@ public class SearchAction implements IWorkbenchWindowActionDelegate {
 		QueryGenerator generator = new QueryGenerator();
 		Query query = generator.generate(doc.get());
 		
-		System.out.println(query);
-
 		try {
 			VotingHeuristicManager manager = new VotingHeuristicManager();
-			Map<Integer, VotingResult> results = manager.match(query);
-			List<VotingResult> resultsList = new ArrayList<VotingResult>();
-			for (VotingResult result : results.values())
-				resultsList.add(result);
-			
+			Map<Integer, VotingResult> resultsMap = manager.match(query);
+			results = new ArrayList<VotingResult>();
+			for (Integer id : resultsMap.keySet()) {
+				VotingResult result = resultsMap.get(id);
+				results.add(result);
+//				System.out.println("rank: " + result.getRank() + ", score: " + result.getScore());
+			}
+			ResultView resultView = (ResultView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResultView.ID);
 		} catch (Exception e) {
+			logger.error(e);
 			MessageDialog.openInformation(
 					window.getShell(),
 					"TDR",
-					"Exception happened when trying to retrieve results: " + e.getMessage());					
+					"Exception happened when trying to retrieve results.");					
 		}		
 		
 	}

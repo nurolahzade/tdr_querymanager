@@ -1,6 +1,5 @@
 package ca.ucalgary.cpsc.ase.querymanager.views;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
@@ -14,9 +13,7 @@ import org.eclipse.swt.SWT;
 
 import ca.ucalgary.cpsc.ase.QueryManager.Heuristic;
 import ca.ucalgary.cpsc.ase.QueryManager.VotingResult;
-import ca.ucalgary.cpsc.ase.QueryManager.heuristic.AssertionHeuristic;
-import ca.ucalgary.cpsc.ase.QueryManager.heuristic.InvocationHeuristic;
-import ca.ucalgary.cpsc.ase.QueryManager.heuristic.ReferenceHeuristic;
+import ca.ucalgary.cpsc.ase.querymanager.actions.SearchAction;
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -48,8 +45,6 @@ public class ResultView extends ViewPart {
 //	private Action action2;
 	private Action doubleClickAction;
 	
-	private List<VotingResult> results;
-
 	/*
 	 * The content provider class is responsible for
 	 * providing objects to the view. It can wrap
@@ -81,8 +76,8 @@ public class ResultView extends ViewPart {
 	//					getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 	//		}
 	//	}
-	class NameSorter extends ViewerSorter {
-	}
+//	class NameSorter extends ViewerSorter {
+//	}
 
 	/**
 	 * The constructor.
@@ -97,10 +92,6 @@ public class ResultView extends ViewPart {
 //		results.add(r1);
 	}
 	
-	public void updateResults(List<VotingResult> results) {
-		this.results = results;
-	}
-
 	/**
 	 * This is a callback that will allow us
 	 * to create the viewer and initialize it.
@@ -113,11 +104,11 @@ public class ResultView extends ViewPart {
 		table.setLinesVisible(true);
 		viewer.setContentProvider(new ViewContentProvider());
 		//viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setSorter(new NameSorter());
-		viewer.setInput(results);
+//		viewer.setSorter(new NameSorter());
+		viewer.setInput(SearchAction.getResults());
 
 		// Create the help context id for the viewer's control
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "QueryManager.viewer");
+//		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "QueryManager.viewer");
 		makeActions();
 //		hookContextMenu();
 		hookDoubleClickAction();
