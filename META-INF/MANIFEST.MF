@@ -19,3 +19,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: ca.ucalgary.cpsc.ase.querymanager,
  ca.ucalgary.cpsc.ase.querymanager.actions,
  ca.ucalgary.cpsc.ase.querymanager.views
+Bundle-Vendor: Mehrdad Nurolahzade

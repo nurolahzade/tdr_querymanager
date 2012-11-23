@@ -79,12 +79,13 @@ public class SearchAction implements IWorkbenchWindowActionDelegate {
 //				System.out.println("rank: " + result.getRank() + ", score: " + result.getScore());
 			}
 			ResultView resultView = (ResultView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResultView.ID);
+			resultView.setQuery(query);
 		} catch (Exception e) {
 			logger.error(e);
 			MessageDialog.openInformation(
 					window.getShell(),
 					"TDR",
-					"Exception happened when trying to retrieve results.");					
+					"Exception thrown when trying to retrieve results.");					
 		}		
 		
 	}

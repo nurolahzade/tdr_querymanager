@@ -8,10 +8,10 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
 
 import ca.ucalgary.cpsc.ase.QueryManager.Heuristic;
+import ca.ucalgary.cpsc.ase.QueryManager.Query;
 import ca.ucalgary.cpsc.ase.QueryManager.VotingResult;
 import ca.ucalgary.cpsc.ase.querymanager.actions.SearchAction;
 
@@ -44,6 +44,8 @@ public class ResultView extends ViewPart {
 //	private Action action1;
 //	private Action action2;
 	private Action doubleClickAction;
+	
+	private Query query;
 	
 	/*
 	 * The content provider class is responsible for
@@ -83,13 +85,10 @@ public class ResultView extends ViewPart {
 	 * The constructor.
 	 */
 	public ResultView() {
-//		VotingResult r1 = new VotingResult(1, "abc.test.xyz");
-//		r1.setRank(1);
-//		r1.add(new ReferenceHeuristic(), 0.8);
-//		r1.add(new InvocationHeuristic(), 0.75);
-//		r1.add(new AssertionHeuristic(), 0.68);
-//		results = new ArrayList<VotingResult>();
-//		results.add(r1);
+	}
+	
+	public void setQuery(Query q) {
+		query = q;
 	}
 	
 	/**
@@ -97,7 +96,7 @@ public class ResultView extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		createColumns(parent, viewer);
 		final Table table = viewer.getTable();
 		table.setHeaderVisible(true);
@@ -238,8 +237,9 @@ public class ResultView extends ViewPart {
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
-//				showMessage("Double-click detected on "+obj.toString());
+				VotingResult result = (VotingResult) ((IStructuredSelection)selection).getFirstElement();
+				HeuristicsDialog dialog = new HeuristicsDialog(viewer.getControl().getShell(), query, result);
+				dialog.open();
 			}
 		};
 	}
@@ -252,17 +252,9 @@ public class ResultView extends ViewPart {
 		});
 	}
 	
-//	private void showMessage(String message) {
-//		MessageDialog.openInformation(
-//				viewer.getControl().getShell(),
-//				"Search Results",
-//				message);
-//	}
-
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-		viewer.getControl().setFocus();
 	}
 }
