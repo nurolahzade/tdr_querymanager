@@ -69,6 +69,8 @@ public class SearchAction implements IWorkbenchWindowActionDelegate {
 		QueryGenerator generator = new QueryGenerator();
 		Query query = generator.generate(doc.get());
 		
+		System.out.println(query);
+		
 		try {
 			VotingHeuristicManager manager = new VotingHeuristicManager();
 			Map<Integer, VotingResult> resultsMap = manager.match(query);
