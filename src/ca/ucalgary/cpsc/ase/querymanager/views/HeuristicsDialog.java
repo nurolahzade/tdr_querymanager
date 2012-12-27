@@ -37,14 +37,26 @@ public class HeuristicsDialog extends Dialog {
 		GridLayout layout = new GridLayout(2, true);
 	    composite.setLayout(layout);		
 		
+		createLabels(composite);				
+		
+		createQueryTree(composite);
+
+		createResultTree(composite);
+		
+		return composite;	
+	}
+
+	private void createLabels(Composite composite) {
 		Label queryLabel = new Label(composite, SWT.NONE);
 		queryLabel.setText("Query");
 		queryLabel.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));				
 
 		Label resultLabel = new Label(composite, SWT.NONE);
 		resultLabel.setText(result.getFqn() + " " + result.getScore());
-		resultLabel.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));				
-		
+		resultLabel.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+	}
+
+	private void createQueryTree(Composite composite) {
 		Tree queryTree = new Tree(composite, SWT.BORDER);
 		queryTree.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
@@ -55,7 +67,9 @@ public class HeuristicsDialog extends Dialog {
 		createTreeItem(queryTree, query.getInvocations());
 		createTreeItem(queryTree, query.getParameters());
 		createTreeItem(queryTree, query.getReferences());
+	}
 
+	private void createResultTree(Composite composite) {
 		Tree resultTree = new Tree(composite, SWT.BORDER);
 		resultTree.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		
@@ -63,12 +77,12 @@ public class HeuristicsDialog extends Dialog {
 			TreeItem heuristicItem = new TreeItem(resultTree, 0);
 			heuristicItem.setText(heuristic.getFullName() + " " + result.getScore(heuristic));
 			for (Object item : heuristic.getMatchingItems(result.getId(), query)) {
-				TreeItem matchedItem = new TreeItem(heuristicItem, 0);
-				matchedItem.setText(item.toString());
+				if (!contains(heuristicItem, item.toString())) {
+					TreeItem matchedItem = new TreeItem(heuristicItem, 0);
+					matchedItem.setText(item.toString());					
+				}
 			}				
 		}
-		
-		return composite;	
 	}
 	
 	private void createTreeItem(Tree tree, QueryElement element) {
@@ -89,12 +103,22 @@ public class HeuristicsDialog extends Dialog {
 		item.setText(list.get(0).getCaption());
 		
 		for (QueryElement element : list) {
-			TreeItem subItem = new TreeItem(item, 0);
-			subItem.setText(element.toString());
-			if (!element.isResolved()) {
-				subItem.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+			if (!contains(item, element.toString())) {
+				TreeItem subItem = new TreeItem(item, 0);
+				subItem.setText(element.toString());
+				if (!element.isResolved()) {
+					subItem.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+				}				
 			}
 		}
+	}
+	
+	private boolean contains(TreeItem item, String element) {
+		for (int i = 0; i < item.getItemCount(); ++i) {
+			if (item.getItem(i).getText().equals(element))
+				return true;
+		}
+		return false;
 	}
 
 	@Override

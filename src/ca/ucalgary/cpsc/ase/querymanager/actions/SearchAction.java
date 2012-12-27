@@ -78,7 +78,7 @@ public class SearchAction implements IWorkbenchWindowActionDelegate {
 			for (Integer id : resultsMap.keySet()) {
 				VotingResult result = resultsMap.get(id);
 				results.add(result);
-//				System.out.println("rank: " + result.getRank() + ", score: " + result.getScore());
+				System.out.println("rank: " + result.getRank() + ", score: " + result.getScore() + ", fqn=" + result.getFqn());
 			}
 			ResultView resultView = (ResultView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResultView.ID);
 			resultView.setQuery(query);
