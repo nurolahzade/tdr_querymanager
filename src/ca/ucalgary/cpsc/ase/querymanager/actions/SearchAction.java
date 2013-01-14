@@ -69,6 +69,8 @@ public class SearchAction implements IWorkbenchWindowActionDelegate {
 		QueryGenerator generator = new QueryGenerator();
 		Query query = generator.generate(doc.get());
 		
+		System.out.println(query);
+		
 		try {
 			VotingHeuristicManager manager = new VotingHeuristicManager();
 			Map<Integer, VotingResult> resultsMap = manager.match(query);
@@ -76,15 +78,16 @@ public class SearchAction implements IWorkbenchWindowActionDelegate {
 			for (Integer id : resultsMap.keySet()) {
 				VotingResult result = resultsMap.get(id);
 				results.add(result);
-//				System.out.println("rank: " + result.getRank() + ", score: " + result.getScore());
+				System.out.println("rank: " + result.getRank() + ", score: " + result.getScore() + ", fqn=" + result.getFqn());
 			}
 			ResultView resultView = (ResultView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResultView.ID);
+			resultView.setQuery(query);
 		} catch (Exception e) {
 			logger.error(e);
 			MessageDialog.openInformation(
 					window.getShell(),
 					"TDR",
-					"Exception happened when trying to retrieve results.");					
+					"Exception thrown when trying to retrieve results.");					
 		}		
 		
 	}
