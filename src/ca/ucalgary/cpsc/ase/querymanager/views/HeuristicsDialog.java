@@ -52,7 +52,7 @@ public class HeuristicsDialog extends Dialog {
 		queryLabel.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));				
 
 		Label resultLabel = new Label(composite, SWT.NONE);
-		resultLabel.setText(result.getFqn() + " " + result.getScore());
+		resultLabel.setText(result.getFqn() + " " + String.format("%.3f", result.getScore()));
 		resultLabel.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 	}
 
@@ -75,7 +75,7 @@ public class HeuristicsDialog extends Dialog {
 		
 		for (Heuristic heuristic : result.getHeuristics()) {
 			TreeItem heuristicItem = new TreeItem(resultTree, 0);
-			heuristicItem.setText(heuristic.getFullName() + " " + result.getScore(heuristic));
+			heuristicItem.setText(heuristic.getFullName() + " " + String.format("%.3f", result.getScore(heuristic)));
 			for (Object item : heuristic.getMatchingItems(result.getId(), query)) {
 				if (!contains(heuristicItem, item.toString())) {
 					TreeItem matchedItem = new TreeItem(heuristicItem, 0);
