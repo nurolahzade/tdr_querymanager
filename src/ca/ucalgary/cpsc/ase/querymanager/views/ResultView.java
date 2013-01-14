@@ -136,7 +136,7 @@ public class ResultView extends ViewPart {
 			@Override
 			public String getText(Object element) {
 				VotingResult result = (VotingResult) element;
-				return result.getScore().toString();
+				return String.format("%.3f", result.getScore());
 			}
 		});
 
