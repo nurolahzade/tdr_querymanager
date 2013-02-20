@@ -65,7 +65,7 @@ public class HeuristicsDialog extends Dialog {
 		createTreeItem(queryTree, query.getAssertions());
 		createTreeItem(queryTree, query.getExceptions());
 		createTreeItem(queryTree, query.getInvocations());
-		createTreeItem(queryTree, query.getParameters());
+//		createTreeItem(queryTree, query.getParameters());
 		createTreeItem(queryTree, query.getReferences());
 	}
 
