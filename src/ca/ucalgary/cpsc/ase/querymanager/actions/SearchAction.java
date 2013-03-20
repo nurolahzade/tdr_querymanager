@@ -17,9 +17,10 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import ca.ucalgary.cpsc.ase.QueryManager.Query;
-import ca.ucalgary.cpsc.ase.QueryManager.VotingHeuristicManager;
-import ca.ucalgary.cpsc.ase.QueryManager.VotingResult;
+import ca.ucalgary.cpsc.ase.common.ServiceProxy;
+import ca.ucalgary.cpsc.ase.common.query.Query;
+import ca.ucalgary.cpsc.ase.common.heuristic.HeuristicManager;
+import ca.ucalgary.cpsc.ase.common.heuristic.VotingResult;
 import ca.ucalgary.cpsc.ase.factextractor.composer.QueryGenerator;
 import ca.ucalgary.cpsc.ase.querymanager.views.ResultView;
 
@@ -72,7 +73,7 @@ public class SearchAction implements IWorkbenchWindowActionDelegate {
 		System.out.println(query);
 		
 		try {
-			VotingHeuristicManager manager = new VotingHeuristicManager();
+			HeuristicManager manager = ServiceProxy.getHeuristicManager();
 			Map<Integer, VotingResult> resultsMap = manager.match(query);
 			results = new ArrayList<VotingResult>();
 			for (Integer id : resultsMap.keySet()) {
@@ -84,10 +85,10 @@ public class SearchAction implements IWorkbenchWindowActionDelegate {
 			resultView.setQuery(query);
 		} catch (Exception e) {
 			logger.error(e);
-			MessageDialog.openInformation(
+			MessageDialog.openError(
 					window.getShell(),
 					"TDR",
-					"Exception thrown when trying to retrieve results.");					
+					"An error has happended when trying to retrieve results.");					
 		}		
 		
 	}

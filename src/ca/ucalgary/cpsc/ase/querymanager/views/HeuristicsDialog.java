@@ -2,6 +2,8 @@ package ca.ucalgary.cpsc.ase.querymanager.views;
 
 import java.util.List;
 
+import javax.naming.NamingException;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -14,20 +16,23 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import ca.ucalgary.cpsc.ase.QueryManager.Query;
-import ca.ucalgary.cpsc.ase.QueryManager.VotingResult;
-import ca.ucalgary.cpsc.ase.QueryManager.Heuristic;
-import ca.ucalgary.cpsc.ase.QueryManager.query.QueryElement;
+import ca.ucalgary.cpsc.ase.common.ServiceProxy;
+import ca.ucalgary.cpsc.ase.common.query.Query;
+import ca.ucalgary.cpsc.ase.common.heuristic.HeuristicManager;
+import ca.ucalgary.cpsc.ase.common.heuristic.VotingResult;
+import ca.ucalgary.cpsc.ase.common.query.QueryElement;
 
 public class HeuristicsDialog extends Dialog {
 
 	protected Query query;
 	protected VotingResult result;
+	protected HeuristicManager heuristicManager; 
 	
-	protected HeuristicsDialog(Shell parentShell, Query query, VotingResult result) {
+	protected HeuristicsDialog(Shell parentShell, Query query, VotingResult result) throws NamingException {
 		super(parentShell);
 		this.query = query;
 		this.result = result;
+		heuristicManager = ServiceProxy.getHeuristicManager();
 	}
 
 	@Override
@@ -73,10 +78,10 @@ public class HeuristicsDialog extends Dialog {
 		Tree resultTree = new Tree(composite, SWT.BORDER);
 		resultTree.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		
-		for (Heuristic heuristic : result.getHeuristics()) {
+		for (String heuristic : result.getHeuristics()) {
 			TreeItem heuristicItem = new TreeItem(resultTree, 0);
-			heuristicItem.setText(heuristic.getFullName() + " " + String.format("%.3f", result.getScore(heuristic)));
-			for (Object item : heuristic.getMatchingItems(result.getId(), query)) {
+			heuristicItem.setText(heuristicManager.getFullName(heuristic) + " " + String.format("%.3f", result.getScore(heuristic)));
+			for (Object item : heuristicManager.getMatchingItems(result.getId(), query, heuristic)) {
 				if (!contains(heuristicItem, item.toString())) {
 					TreeItem matchedItem = new TreeItem(heuristicItem, 0);
 					matchedItem.setText(item.toString());					

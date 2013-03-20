@@ -2,17 +2,20 @@ package ca.ucalgary.cpsc.ase.querymanager.views;
 
 import java.util.List;
 
+import javax.naming.NamingException;
+
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 
-import ca.ucalgary.cpsc.ase.QueryManager.Heuristic;
-import ca.ucalgary.cpsc.ase.QueryManager.Query;
-import ca.ucalgary.cpsc.ase.QueryManager.VotingResult;
+import ca.ucalgary.cpsc.ase.common.query.Query;
+import ca.ucalgary.cpsc.ase.common.heuristic.VotingResult;
 import ca.ucalgary.cpsc.ase.querymanager.actions.SearchAction;
 
 /**
@@ -46,6 +49,8 @@ public class ResultView extends ViewPart {
 	private Action doubleClickAction;
 	
 	private Query query;
+	
+	private static Logger logger = Logger.getLogger(ResultView.class);	
 	
 	/*
 	 * The content provider class is responsible for
@@ -156,8 +161,8 @@ public class ResultView extends ViewPart {
 			public String getText(Object element) {
 				VotingResult result = (VotingResult) element;
 				StringBuilder label = new StringBuilder();
-				for (Heuristic heuristic : result.getHeuristics()) {
-					label.append(heuristic.getName());
+				for (String heuristic : result.getHeuristics()) {
+					label.append(heuristic);
 					label.append(" ");			    	
 				}
 				return label.toString().trim();
@@ -238,8 +243,17 @@ public class ResultView extends ViewPart {
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				VotingResult result = (VotingResult) ((IStructuredSelection)selection).getFirstElement();
-				HeuristicsDialog dialog = new HeuristicsDialog(viewer.getControl().getShell(), query, result);
-				dialog.open();
+				HeuristicsDialog dialog;
+				try {
+					dialog = new HeuristicsDialog(viewer.getControl().getShell(), query, result);
+					dialog.open();
+				} catch (NamingException e) {
+					logger.error(e);
+					MessageDialog.openError(
+							viewer.getControl().getShell(),
+							"TDR",
+							"An error has happended when trying to retrieve results.");					
+				}
 			}
 		};
 	}
