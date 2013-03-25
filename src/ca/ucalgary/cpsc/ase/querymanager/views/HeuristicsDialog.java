@@ -1,6 +1,8 @@
 package ca.ucalgary.cpsc.ase.querymanager.views;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -18,6 +20,8 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import ca.ucalgary.cpsc.ase.common.ServiceProxy;
 import ca.ucalgary.cpsc.ase.common.query.Query;
+import ca.ucalgary.cpsc.ase.common.query.QueryInvocation;
+import ca.ucalgary.cpsc.ase.common.query.QueryMethod;
 import ca.ucalgary.cpsc.ase.common.heuristic.HeuristicManager;
 import ca.ucalgary.cpsc.ase.common.heuristic.VotingResult;
 import ca.ucalgary.cpsc.ase.common.query.QueryElement;
@@ -72,6 +76,26 @@ public class HeuristicsDialog extends Dialog {
 		createTreeItem(queryTree, query.getInvocations());
 //		createTreeItem(queryTree, query.getParameters());
 		createTreeItem(queryTree, query.getReferences());
+		createDataFlowsTreeItem(queryTree, query.getDataFlows());
+	}
+
+	private void createDataFlowsTreeItem(Tree tree,
+			Map<QueryMethod, Set<QueryInvocation>> dataFlows) {
+		if (dataFlows == null || dataFlows.size() == 0)
+			return;
+		
+		TreeItem item = new TreeItem(tree, 0);
+		item.setText("Data Flows");
+		
+		for (QueryMethod method : dataFlows.keySet()) {
+			TreeItem from = new TreeItem(item, 0);
+			from.setText(method.toString());
+			for (QueryInvocation invocation : dataFlows.get(method)) {
+				TreeItem to = new TreeItem(from, 0);
+				to.setText(invocation.toString());				
+			}
+		}
+		
 	}
 
 	private void createResultTree(Composite composite) {
@@ -112,7 +136,7 @@ public class HeuristicsDialog extends Dialog {
 				TreeItem subItem = new TreeItem(item, 0);
 				subItem.setText(element.toString());
 				if (!element.isResolved()) {
-					subItem.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					subItem.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
 				}				
 			}
 		}
