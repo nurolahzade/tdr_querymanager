@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -31,7 +32,9 @@ public class HeuristicsDialog extends Dialog {
 	protected Query query;
 	protected VotingResult result;
 	protected HeuristicManager heuristicManager; 
-	
+
+	private static Logger logger = Logger.getLogger(HeuristicsDialog.class);	
+
 	protected HeuristicsDialog(Shell parentShell, Query query, VotingResult result) throws NamingException {
 		super(parentShell);
 		this.query = query;
@@ -50,7 +53,11 @@ public class HeuristicsDialog extends Dialog {
 		
 		createQueryTree(composite);
 
-		createResultTree(composite);
+		try {
+			createResultTree(composite);
+		} catch (Exception e) {
+			logger.error(e);
+		}
 		
 		return composite;	
 	}
@@ -91,26 +98,42 @@ public class HeuristicsDialog extends Dialog {
 			TreeItem from = new TreeItem(item, 0);
 			from.setText(method.toString());
 			for (QueryInvocation invocation : dataFlows.get(method)) {
-				TreeItem to = new TreeItem(from, 0);
-				to.setText(invocation.toString());				
+				if (!contains(from, invocation.toString())) {
+					TreeItem to = new TreeItem(from, 0);
+					to.setText(invocation.toString());				
+				}
 			}
 		}
-		
 	}
 
-	private void createResultTree(Composite composite) {
+	private void createResultTree(Composite composite) throws Exception {
 		Tree resultTree = new Tree(composite, SWT.BORDER);
 		resultTree.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		
 		for (String heuristic : result.getHeuristics()) {
 			TreeItem heuristicItem = new TreeItem(resultTree, 0);
 			heuristicItem.setText(heuristicManager.getFullName(heuristic) + " " + String.format("%.3f", result.getScore(heuristic)));
-			for (Object item : heuristicManager.getMatchingItems(result.getId(), query, heuristic)) {
-				if (!contains(heuristicItem, item.toString())) {
-					TreeItem matchedItem = new TreeItem(heuristicItem, 0);
-					matchedItem.setText(item.toString());					
+			if ("DF".equals(heuristic)) {
+				Map<String, Set<String>> dataFlows = heuristicManager.getMatchingDataFlows(result.getId(), query);
+				for (String method : dataFlows.keySet()) {
+					TreeItem from = new TreeItem(heuristicItem, 0);
+					from.setText(method);
+					for (String invocation : dataFlows.get(method)) {
+						if (!contains(from, invocation)) {
+							TreeItem to = new TreeItem(from, 0);
+							to.setText(invocation);				
+						}
+					}
 				}
-			}				
+			}
+			else {
+				for (Object item : heuristicManager.getMatchingItems(result.getId(), query, heuristic)) {
+					if (!contains(heuristicItem, item.toString())) {
+						TreeItem matchedItem = new TreeItem(heuristicItem, 0);
+						matchedItem.setText(item.toString());					
+					}
+				}				
+			}
 		}
 	}
 	
